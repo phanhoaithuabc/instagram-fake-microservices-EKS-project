@@ -18,6 +18,22 @@ The `set_env.sh` has been prepared as an optional tool to help configure these v
 git rm --cached set_env.sh
 echo *set_env.sh >> .gitignore
 ```
+### Tips
+1. It's useful to "lint" your code so that changes in the codebase adhere to a coding standard:
+    ```bash
+    npx eslint --ext .js,.ts src/
+    # To have your code fixed automatically, run
+    npx eslint --ext .js,.ts src/ --fix
+    ```
+2. Over time, our code will become outdated and inevitably run into security vulnerabilities. To address them, you can run:
+    ```bash
+    npm audit fix
+    ```
+3. `set_env.sh` is really for your backend application. Frontend applications have a different notion of how to store configurations. Configurations for the application endpoints can be configured inside of the `environments/environment.*ts` files.
+4. In `set_env.sh`, environment variables are set with `export $VAR=value`. Setting it this way is not permanent; every time you open a new terminal, you will have to run `set_env.sh` to reconfigure your environment variables. To set the environment variables permanently, save all the variables above in your `~/.bashrc` or `~/.profile` or `~/.zshrc` file and use:
+    ```bash
+    source ~/.profile
+    ```
 
 ## 1. Database
 Create a PostgreSQL database either locally or on AWS RDS.
@@ -252,7 +268,17 @@ Check your deployed application at the External IP of your *publicfrontend* serv
     ```
     In case of `ImagePullBackOff` or `ErrImagePull` or `CrashLoopBackOff`, review your deployment.yaml file(s) if they have the right image path. 
 
-2. Look at what's there inside the running container. [Open a Shell to a running container](https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/) as:
+2. Check if the backend pods are experiencing `CrashLoopBackOff` due to an insufficient memory error. If yes, then you can increase the memory limits as shown in this example.
+    ```bash
+    kubectl get pods
+    kubectl logs [pod-name] -p
+    # Once you increase the memory, check the updated deployment as:
+    kubectl get pod [pod-name] --output=yaml
+    # You can autoscale, if required, as
+    kubectl autoscale deployment backend-user --cpu-percent=70 --min=3 --max=5
+    ```
+
+3. Look at what's there inside the running container. [Open a Shell to a running container](https://kubernetes.io/docs/tasks/debug-application-cluster/get-shell-running-container/) as:
     ```bash
     kubectl get pods
     # Assuming "backend-feed-68d5c9fdd6-dkg8c" is a pod
@@ -263,10 +289,33 @@ Check your deployed application at the External IP of your *publicfrontend* serv
     # This is helpful to see is backend is working by opening a bash into the frontend container
     ```
 
-3. When you are sure that all pods are running successfully, then use developer tools in the browser to see the precise reason for the error. 
+4. When you are sure that all pods are running successfully, then use developer tools in the browser to see the precise reason for the error. 
     * If your frontend is loading properly, and showing `Error: Uncaught (in promise): HttpErrorResponse: {"headers":{"normalizedNames":{},"lazyUpdate":null,"headers":{}},"status":0,"statusText":"Unknown Error"....`, it is possibly because the `frontend/src/environments/environment.ts` file has incorrectly defined the ‘apiHost’ to whom forward the requests. 
     * If your frontend is **not** not loading, and showing `Error: Uncaught (in promise): HttpErrorResponse: {"headers":{"normalizedNames":{},"lazyUpdate":null,"headers":{}},"status":0,"statusText":"Unknown Error", ....` , it is possibly because URL variable is not set correctly. 
     * In the case of `Failed to load resource: net::ERR_CONNECTION_REFUSED` error as well, it is possibly because the URL variable is not set correctly.
+
+### Appendix - Create an EKS Cluster using the EKSCTL Tool
+* You can create an EKS cluster either via the AWS web console or the EKSCTL utility. EKSCTL is a command-line utility to create an EKS cluster and the associated resources in a single command. To use this utility, install the EKSCTL and run the command below:
+    ```bash
+    # Feel free to use the same/different flags as you like
+    eksctl create cluster --name myCluster --region=us-east-1 --nodes-min=2 --nodes-max=3
+    # Recommended: You can see many more flags using "eksctl create cluster --help" command.
+    # For example, you can set the node instance type using --node-type flag
+    ```
+* The default command above will set the following for you:
+    * An auto-generated name
+    * Two m5.large worker nodes. Recall that the worker nodes are the virtual machines, and the m5.large type defines that each VM will have 2 vCPUs, 8 GiB memory, and up to 10 Gbps network bandwidth.
+    * Use the Linux AMIs as the underlying machine image
+    * An autoscaling group with [2-3] nodes
+    * Importantly, it will write cluster credentials to the default config file locally. Meaning, EKSCTL will set up KUBECTL to communicate with your cluster. If you'd have created the cluster using the web console, you'll have to set up the kubeconfig manually.
+        ```bash
+        # Once you get the success confirmation, run
+        kubectl get nodes
+        ```
+* If you run into issues, either go to your CloudFormation console or run:
+    ```bash
+    eksctl utils describe-stacks --region=us-east-1 --cluster=myCluster
+    ```
 
 ### Screenshots
 So that we can verify that your project is deployed, please include the screenshots of the following commands with your completed project. 
@@ -288,22 +337,10 @@ To verify that user activity is logged, please include a screenshot of:
 kubectl logs <your pod name>
 ```
 
-## Tips
-1. It's useful to "lint" your code so that changes in the codebase adhere to a coding standard:
-    ```bash
-    npx eslint --ext .js,.ts src/
-    # To have your code fixed automatically, run
-    npx eslint --ext .js,.ts src/ --fix
-    ```
-2. Over time, our code will become outdated and inevitably run into security vulnerabilities. To address them, you can run:
-    ```bash
-    npm audit fix
-    ```
-3. `set_env.sh` is really for your backend application. Frontend applications have a different notion of how to store configurations. Configurations for the application endpoints can be configured inside of the `environments/environment.*ts` files.
-4. In `set_env.sh`, environment variables are set with `export $VAR=value`. Setting it this way is not permanent; every time you open a new terminal, you will have to run `set_env.sh` to reconfigure your environment variables. To set the environment variables permanently, save all the variables above in your `~/.bashrc` or `~/.profile` or `~/.zshrc` file and use:
-    ```bash
-    source ~/.profile
-    ```
+## 10. Clean up
+Once we are done with our exercises, it helps to remove our AWS resources so that we don't accrue unnecessary charges to our AWS balance.
+* Delete the EKS cluster.
+* Delete the S3 bucket and RDS PostgreSQL database.
 
 ## Image Filter App JS Deploy to ElasticBeanstalk
 1. Screenshot of EB app after deployement
