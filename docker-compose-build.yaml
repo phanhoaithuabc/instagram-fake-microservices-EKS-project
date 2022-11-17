@@ -1,0 +1,22 @@
+version: "3"
+services:
+  reverseproxy:
+    # platform: linux/amd64
+    build:
+      context: ./reverse-proxy
+    image: reverse-proxy
+  backend_user:
+    # platform: linux/amd64
+    build:
+      context: ./backend-api-feed
+    image: backend-api-feed
+  backend_feed:
+    # platform: linux/amd64
+    build:
+      context: ./backend-api-user
+    image: backend-api-user
+  frontend:
+    # platform: linux/amd64
+    build:
+      context: ./frontend
+    image: frontend:local
