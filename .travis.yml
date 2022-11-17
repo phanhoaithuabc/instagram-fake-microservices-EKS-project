@@ -1,0 +1,34 @@
+language: node_js
+node_js:
+  - 13
+
+services:
+  - docker
+
+install:
+  - echo "no dependencies"
+
+before_script:
+  - echo "run testing"
+
+script:
+  - docker --version
+  # Build docker image
+  - docker build -t backend-api-feed ./backend-api-feed
+  - docker build -t backend-api-user ./backend-api-user
+  - docker build -t backend-frontend ./backend-frontend
+  - docker build -t reverse-proxy ./reverse-proxy
+
+  # Tagging
+  - docker tag backend-api-feed phanhoaithu/backend-api-feed:v1
+  - docker tag backend-api-user phanhoaithu/backend-api-user:v1
+  - docker tag backend-frontend phanhoaithu/backend-frontend:v1
+  - docker tag reverse-proxy phanhoaithu/reverse-proxy:v1
+
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push phanhoaithu/backend-api-feed:v1
+  - docker push phanhoaithu/backend-api-user:v1
+  - docker push phanhoaithu/backend-frontend:v1
+  - docker push phanhoaithu/reverse-proxy:v1
