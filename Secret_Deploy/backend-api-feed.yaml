@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api-feed
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      run: backend-api-feed
+  template:
+    metadata:
+      labels:
+        run: backend-api-feed
+    spec:
+      containers:
+      - name: backend-api-feed
+        image: phanhoaithu/backend-api-feed:v1
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: '500m'
+          limits:
+            cpu: '1000m'
+        ports:
+        - containerPort: 8080
+        env:
+          - name: POSTGRES_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: POSTGRES_HOST
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: POSTGRES_DB
+          - name: AWS_BUCKET
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: AWS_BUCKET
+          - name: AWS_PROFILE
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: AWS_PROFILE
+          - name: AWS_REGION
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: AWS_REGION
+          - name: JWT_SECRET
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: JWT_SECRET
+          - name: URL
+            valueFrom:
+              configMapKeyRef:
+                name: env-configmap
+                key: URL
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_USERNAME
+                optional: false 
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: env-secret
+                key: POSTGRES_PASSWORD
+                optional: false 
+        volumeMounts:
+            - name: aws-secret
+              mountPath: '/root/.aws/'
+              readOnly: true
+      restartPolicy: Always
+      volumes:
+        - name: aws-secret
+          secret:
+            secretName: aws-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-api-feed
+  labels:
+    run: backend-api-feed
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    run: backend-api-feed
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

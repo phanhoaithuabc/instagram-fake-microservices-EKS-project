@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: env-configmap
+data:
+  POSTGRES_HOST: cdr.dksjfvnd.us-east-1.rds.amazonaws.com
+  POSTGRES_DB: instagram
+  AWS_PROFILE: default
+  AWS_BUCKET: instagram-dev
+  AWS_REGION: us-east-1
+  JWT_SECRET: morning
+  URL: http://localhost:8100
