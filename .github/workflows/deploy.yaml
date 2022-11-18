@@ -22,4 +22,4 @@ jobs:
           context: ./backend-api-feed
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend-api-feed:v1
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-api-feed:v1
