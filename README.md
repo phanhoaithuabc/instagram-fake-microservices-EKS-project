@@ -150,7 +150,9 @@ So that we can verify your project’s pipeline is set up properly, please inclu
 ## 8. Container Orchestration with Kubernetes
 ### EKS Cluster Creation
 Follow the instructions provided by AWS on [Creating an Amazon EKS Cluster](https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html).
-
+```bash
+eksctl create cluster --name instagram-fake-cluster --region us-east-1
+```
 > For the _Cluster Service Role_ in the creation process, create an `AWS role` for EKS. Make sure you attach the policies for `AmazonEKSClusterPolicy`, `AmazonEC2ContainerServiceFullAccess`, and `AmazonEKSServicePolicy`.
 
 ### EKS Node Groups
