@@ -20,6 +20,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ./backend-api-feed
-          file: ./Dockerfile
+          file: ./backend-api-feed/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/backend-api-feed:v1
