@@ -2,9 +2,13 @@
 To help review your infrastructure, please include the following screenshots in this directory::
 
 ## Deployment Pipeline
-* DockerHub showing containers that you have pushed
-* GitHub repository’s settings showing your Travis webhook (can be found in Settings - Webhook)
-* Travis CI showing a successful build and deploy job
+* DockerHub showing containers that you have pushed 
+<img src='deployment/docker_hub.png'>
+
+* GitHub repository’s settings showing your Travis webhook (can be found in Settings - Webhook) - I used Github Action instead
+
+* Github Action CI showing a successful build and deploy job
+<img src='deployment/github-action-cicd.png'>
 
 ## Kubernetes
 * To verify Kubernetes pods are deployed properly
