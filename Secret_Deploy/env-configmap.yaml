@@ -3,10 +3,10 @@ kind: ConfigMap
 metadata:
   name: env-configmap
 data:
-  POSTGRES_HOST: cdr.dksjfvnd.us-east-1.rds.amazonaws.com
+  POSTGRES_HOST: instagram.cmz6k85btnhd.us-east-1.rds.amazonaws.com
   POSTGRES_DB: instagram
   AWS_PROFILE: default
-  AWS_BUCKET: instagram-dev
+  AWS_BUCKET: instagram-dev-thuph
   AWS_REGION: us-east-1
   JWT_SECRET: morning
-  URL: http://localhost:8100
+  URL: http://a6d6c5633ebc1474cabd32c2a5572209-557636959.us-east-1.elb.amazonaws.com:8100

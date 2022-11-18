@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend-api-feed
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       run: backend-api-feed
