@@ -177,8 +177,8 @@ Follow the instructions provided by AWS on [Creating a Managed Node Group](https
 ### Deployment
 Deploy the Docker containers for the frontend & backend in their respective pods. 
 1. **ConfigMap:** Create `env-configmap.yaml`, and save all your configuration values (non-confidential environments variables) in that file. 
-2. **Secret:** Create `env-secret.yaml` file to store the confidential values, such as login credentials. Unlike the AWS credentials, these values do not need to be Base64 encoded.
-3. **Secret:** Create `aws-secret.yaml` file to store your AWS login credentials. Replace `___INSERT_AWS_CREDENTIALS_FILE__BASE64____` with the Base64 encoded credentials. 
+2. **ENV Secret:** Create `env-secret.yaml` file to store the confidential values, such as login credentials. Unlike the AWS credentials, these values do not need to be Base64 encoded.
+3. **AWS Secret:** Create `aws-secret.yaml` file to store your AWS login credentials. Replace `___INSERT_AWS_CREDENTIALS_FILE__BASE64____` with the Base64 encoded credentials. 
     * Mac/Linux users: You need to select the applicable pair of `aws_access_key` from the output of the `cat` command above and convert that string into `base64`:
         ```bash
         # Use a combination of head/tail command to identify lines you want to convert to base64
@@ -221,8 +221,10 @@ If the deployment is successful, and services are created, there are two options
     kubectl get services publicfrontend
     # Note down the External IP, such as 
     # a5e34958a2ca14b91b020d8aeba87fbb-1366498583.us-east-1.elb.amazonaws.com
+    kubectl expose deployment reverse-proxy --type=LoadBalancer --name=publicreverseproxy
     # Check name, ClusterIP, and External IP of all deployments
-    kubectl get services 
+    kubectl get services
+    kubectl get pods
     ```
     <img src="screenshots\connect-to-kubernetes.png">
     <img src="screenshots\success-deployment.png">
