@@ -127,7 +127,7 @@ The *reverseproxy* service will help add another layer between the frontend and 
 <img src="screenshots\check-docker.png">
 <img src="screenshots\app-launch.png">
 
-## 7. Set up Travis continuous integration pipeline
+## 7. Set up Travis continuous integration pipeline (I am gonna use Github Action instead [here](.github\workflows\deploy.yaml))
 Prior to setting up a multi-container application in Kubernetes, set up a CI pipeline to build and push our application code as Docker images in DockerHub. The end result that we want is a setup where changes in your GitHub code will automatically trigger a build process that generates Docker images.
 
 ### Create Dockerhub Repositories
