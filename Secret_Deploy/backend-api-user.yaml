@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend-api-user
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       run: backend-api-user

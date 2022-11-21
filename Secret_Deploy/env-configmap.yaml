@@ -9,4 +9,4 @@ data:
   AWS_BUCKET: instagram-dev-thuph
   AWS_REGION: us-east-1
   JWT_SECRET: morning
-  URL: http://a6d6c5633ebc1474cabd32c2a5572209-557636959.us-east-1.elb.amazonaws.com:8100
+  URL: aa693eecb9987487bbfd800567cadffc-178036798.us-east-1.elb.amazonaws.com:8100
