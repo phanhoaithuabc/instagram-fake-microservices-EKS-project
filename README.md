@@ -233,7 +233,7 @@ If the deployment is successful, and services are created, there are two options
 Once you have the External IP of your front end and reverseproxy deployment, Change the API endpoints in the following places locally:
 * Environment variables - Replace the http://**localhost**:8100 string with the Cluster-IP of the `frontend` service.  After replacing run `source ~/.zshrc` and verify using `echo $URL`
 *  `Secret_Deploy/env-configmap.yaml` file - Replace http://localhost:8100 string with the Cluster IP of the `frontend`. 
-* `frontend/src/environments/environment.ts` file - Replace the keyword localhost in the http://localhost:8080/api/v0 string with the External-IP of the reverseproxy deployment. For example,
+* `frontend/src/environments/environment.ts` file - Replace the keyword localhost in the http://localhost:8080/api/v0 string with the External-IP of the reverse-proxy deployment. For example,
     ```bash
     # Assuming http://513419455.us-east-1.elb.amazonaws.com is the External-IP of the *reverseproxy* service.
     apiHost: 'http://513419455.us-east-1.elb.amazonaws.com:8080/api/v0'
@@ -260,6 +260,21 @@ kubectl set image deployment frontend frontend=phanhoaithu/frontend:v2
 ```
 Check your deployed application at the External IP of your *publicfrontend* service. 
 <img src="screenshots/access-publicfrontend.png">
+
+### Create HPA
+Create a Kubernetes Metrics Server
+1. To install Metrics Server, run the following command:
+    ```bash
+    kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+    ```
+2. To confirm that Metrics Server is running, run the following command:
+    ```bash
+    kubectl get pods -n kube-system -l k8s-app=metrics-server
+    ```
+3. To create an HPA, run the following command:
+    ```bash
+    kubectl autoscale deployment backend-api-feed --cpu-percent=50 --min=1 --max=10
+    ```
 
 ### Troubleshoot
 1. Use this command to see the STATUS of your pods:
